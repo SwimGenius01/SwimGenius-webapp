@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SwimGenius</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-mark">🏊</div>
+      <div class="sb-logo-name">Swim<span>Genius</span></div>
+    </div>
+
+    <div class="sb-user" onclick="goTo('account')">
+      <div class="user-avatar" id="sb-avatar">?</div>
+      <div>
+        <div class="user-name" id="sb-name">Loading...</div>
+        <div class="user-role">View profile →</div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="nav-section-label">Main</div>
+      <div class="nav-item active" onclick="goTo('dashboard', this)">
+        <span class="nav-icon">▣</span>Dashboard
+      </div>
+
+      <div class="nav-section-label">Training</div>
+      <div class="nav-item" onclick="goTo('times', this)">
+        <span class="nav-icon">⏱</span>My Times
+      </div>
+      <div class="nav-item" onclick="goTo('coach', this)">
+        <span class="nav-icon">◈</span>AI Coach
+        <span class="nav-badge">AI</span>
+      </div>
+      <div class="nav-item" onclick="goTo('analysis', this)">
+        <span class="nav-icon">◑</span>Analysis
+      </div>
+      <div class="nav-item" onclick="goTo('dryland', this)">
+        <span class="nav-icon">💪</span>Dryland &amp; Stretches
+      </div>
+
+      <div class="nav-section-label">Progress</div>
+      <div class="nav-item" onclick="goTo('achievements', this)">
+        <span class="nav-icon">🏆</span>Achievements
+        <span class="nav-badge yellow" id="ach-badge" style="display:none;">0</span>
+      </div>
+
+      <div class="nav-section-label">Account</div>
+      <div class="nav-item" onclick="goTo('account', this)">
+        <span class="nav-icon">◎</span>My Profile
+      </div>
+    </nav>
+
+    <div class="sb-bottom">
+      <div class="nav-item" onclick="handleLogout()">
+        <span class="nav-icon">↩</span>Sign out
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <span class="page-title" id="topbar-title">Dashboard</span>
+      <button class="tb-btn primary" onclick="goTo('times')">+ Log Time</button>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="view active" id="view-dashboard">
+        <div class="dash-welcome">
+          <div>
+            <div class="dash-greeting" id="dash-greeting">Good morning</div>
+            <div class="dash-sub" id="dash-username">Welcome back, Swimmer</div>
+          </div>
+          <div class="dash-date" id="dash-date"></div>
+        </div>
+
+        <div class="dash-stats">
+          <div class="dash-stat-card">
+            <div class="dsc-icon" style="background:rgba(47,129,247,.12);color:var(--blue);">⏱</div>
+            <div>
+              <div class="dsc-val" id="stat-total">0</div>
+              <div class="dsc-label">Times Logged</div>
+            </div>
+          </div>
+          <div class="dash-stat-card">
+            <div class="dsc-icon" style="background:rgba(210,153,34,.12);color:var(--yellow);">★</div>
+            <div>
+              <div class="dsc-val" id="stat-prs">0</div>
+              <div class="dsc-label">Personal Records</div>
+            </div>
+          </div>
+          <div class="dash-stat-card">
+            <div class="dsc-icon" style="background:rgba(63,185,80,.12);color:var(--green);">🎯</div>
+            <div>
+              <div class="dsc-val" id="stat-goals">0/0</div>
+              <div class="dsc-label">Goals Done</div>
+            </div>
+          </div>
+          <div class="dash-stat-card">
+            <div class="dsc-icon" style="background:rgba(57,208,216,.12);color:var(--cyan);">◈</div>
+            <div>
+              <div class="dsc-val" id="stat-best">—</div>
+              <div class="dsc-label">Best Event</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-main">
+          <div class="dash-left">
+            <div class="card">
+              <div class="card-head">
+                <span class="card-title">Recent Times</span>
+                <span class="card-action" onclick="goTo('times')">View all →</span>
+              </div>
+              <div id="dash-times-body" style="padding:4px 0;"></div>
+            </div>
+            <div class="card dash-tip-card">
+              <div class="dash-tip-inner">
+                <div class="dash-tip-label">Coach Tip</div>
+                <div class="dash-tip-text">"Focus on your catch position — most freestyle swimmers lose up to 15% of propulsive force with a dropped elbow on entry."</div>
+                <div class="dash-tip-author">— SwimGenius AI Coach</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dash-right">
+            <div class="card">
+              <div class="card-head"><span class="card-title">Jump In</span></div>
+              <div class="dash-action-btn" onclick="goTo('times')">
+                <div class="dab-icon" style="background:rgba(47,129,247,.1);color:var(--blue);">⏱</div>
+                <div class="dab-text"><div class="dab-title">Log a Time</div><div class="dab-sub">Record your latest swim</div></div>
+                <div class="dab-arrow">›</div>
+              </div>
+              <div class="dash-action-btn" onclick="goTo('coach')">
+                <div class="dab-icon" style="background:rgba(57,208,216,.1);color:var(--cyan);">◈</div>
+                <div class="dab-text"><div class="dab-title">AI Coach</div><div class="dab-sub">Ask for training advice</div></div>
+                <div class="dab-arrow">›</div>
+              </div>
+              <div class="dash-action-btn" onclick="goTo('dryland')">
+                <div class="dab-icon" style="background:rgba(163,113,247,.1);color:var(--purple);">💪</div>
+                <div class="dab-text"><div class="dab-title">Dryland &amp; Stretches</div><div class="dab-sub">Today's workout</div></div>
+                <div class="dab-arrow">›</div>
+              </div>
+              <div class="dash-action-btn" onclick="goTo('achievements')">
+                <div class="dab-icon" style="background:rgba(210,153,34,.1);color:var(--yellow);">🏆</div>
+                <div class="dab-text"><div class="dab-title">Achievements</div><div class="dab-sub">Goals &amp; milestones</div></div>
+                <div class="dab-arrow">›</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <span class="card-title">Profile Snapshot</span>
+                <span class="card-action" onclick="goTo('account')">Edit →</span>
+              </div>
+              <div class="card-body">
+                <div class="snap-row"><span class="snap-key">Club</span><span class="snap-val" id="snap-club">—</span></div>
+                <div class="snap-row"><span class="snap-key">Level</span><span class="snap-val" id="snap-level">—</span></div>
+                <div class="snap-row"><span class="snap-key">Stroke</span><span class="snap-val" id="snap-stroke">—</span></div>
+                <div class="snap-row"><span class="snap-key">Training</span><span class="snap-val" id="snap-training">—</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIMES -->
+      <div class="view" id="view-times">
+        <div class="two-col">
+          <div class="card">
+            <div class="card-head"><span class="card-title">Log a Time</span></div>
+            <div class="card-body">
+              <div class="form-grid">
+                <div class="form-field full">
+                  <label>Event</label>
+                  <select id="t-event">
+                    <option>50m Freestyle</option><option>100m Freestyle</option><option>200m Freestyle</option>
+                    <option>400m Freestyle</option><option>800m Freestyle</option><option>1500m Freestyle</option>
+                    <option>50m Backstroke</option><option>100m Backstroke</option><option>200m Backstroke</option>
+                    <option>50m Breaststroke</option><option>100m Breaststroke</option><option>200m Breaststroke</option>
+                    <option>50m Butterfly</option><option>100m Butterfly</option><option>200m Butterfly</option>
+                    <option>200m IM</option><option>400m IM</option>
+                  </select>
+                </div>
+                <div class="form-field"><label>Minutes</label><input type="number" id="t-min" placeholder="0" min="0" max="59"></div>
+                <div class="form-field"><label>Seconds</label><input type="number" id="t-sec" placeholder="00.00" min="0" max="59.99" step="0.01"></div>
+                <div class="form-field">
+                  <label>Pool</label>
+                  <select id="t-pool">
+                    <option value="SCM">Short Course (25m)</option>
+                    <option value="LCM">Long Course (50m)</option>
+                  </select>
+                </div>
+                <div class="form-field"><label>Date</label><input type="date" id="t-date"></div>
+                <div class="form-field full"><label>Meet / Location</label><input type="text" id="t-meet" placeholder="e.g. City Championships"></div>
+              </div>
+              <div class="form-actions">
+                <button class="btn primary" onclick="logTime()">Log Time</button>
+                <button class="btn" onclick="clearTimeForm()">Clear</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="max-height:520px;overflow:hidden;display:flex;flex-direction:column;">
+            <div class="card-head">
+              <span class="card-title">Time Log</span>
+              <span id="times-count" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);">0 entries</span>
+            </div>
+            <div style="overflow-y:auto;flex:1;">
+              <div id="times-empty" class="empty-panel">
+                <div class="empty-icon">⏱</div>
+                <div class="empty-text">No times logged yet.</div>
+              </div>
+              <table class="data-table" id="times-table" style="display:none;">
+                <thead><tr><th>Event</th><th>Time</th><th>Pool</th><th>Date</th></tr></thead>
+                <tbody id="times-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COACH -->
+      <div class="view" id="view-coach">
+        <div style="max-width:760px;margin:0 auto;">
+          <div class="card">
+            <div class="card-head">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:26px;height:26px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:700;">AI</div>
+                <span class="card-title">AI Coach</span>
+                <div style="width:7px;height:7px;border-radius:50%;background:var(--green);"></div>
+              </div>
+              <span style="font-size:11px;color:var(--text3);">Powered by Claude</span>
+            </div>
+            <div class="chat-wrap">
+              <div class="chat-messages" id="chat-msgs">
+                <div class="msg bot">
+                  <div class="msg-av">AI</div>
+                  <div class="msg-bbl">Hey! I'm your AI swimming coach. I can help with training plans, stroke technique, race strategy, and nutrition. What are you working on? 🏊</div>
+                </div>
+              </div>
+              <div class="chips" id="coach-chips">
+                <button class="chip" onclick="sendChip('Build me a training plan for the 100m freestyle')">100m Freestyle plan</button>
+                <button class="chip" onclick="sendChip('How do I improve my flip turns?')">Flip turn tips</button>
+                <button class="chip" onclick="sendChip('What should I eat before a race?')">Race nutrition</button>
+                <button class="chip" onclick="sendChip('How can I build more endurance in the pool?')">Build endurance</button>
+              </div>
+              <div class="chat-input-row">
+                <input class="chat-inp" id="coach-input" placeholder="Ask your coach…" onkeydown="if(event.key==='Enter')sendMsg()">
+                <button class="chat-send" onclick="sendMsg()">▶</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANALYSIS -->
+      <div class="view" id="view-analysis">
+        <div class="analysis-grid">
+          <div class="card">
+            <div class="card-head"><span class="card-title">Performance Input</span></div>
+            <div class="card-body">
+              <div class="form-grid">
+                <div class="form-field"><label>Stroke</label>
+                  <select id="a-stroke">
+                    <option>Freestyle</option><option>Backstroke</option><option>Breaststroke</option>
+                    <option>Butterfly</option><option>Individual Medley</option>
+                  </select>
+                </div>
+                <div class="form-field"><label>Distance</label>
+                  <select id="a-dist">
+                    <option>50m</option><option>100m</option><option>200m</option>
+                    <option>400m</option><option>800m</option><option>1500m</option>
+                  </select>
+                </div>
+                <div class="form-field full"><label>Your Time</label><input type="text" id="a-time" placeholder="e.g. 1:02.45"></div>
+                <div class="form-field full">
+                  <label>Describe Your Swim</label>
+                  <textarea id="a-notes" rows="4" placeholder="e.g. Started too fast, struggled on lap 3…" style="resize:vertical;"></textarea>
+                </div>
+              </div>
+              <div class="form-actions"><button class="btn primary" onclick="runAnalysis()">Run Analysis</button></div>
+            </div>
+          </div>
+
+          <div class="card" style="display:flex;flex-direction:column;">
+            <div class="card-head"><span class="card-title">Analysis Results</span></div>
+            <div id="analysis-empty" class="empty-panel" style="flex:1;">
+              <div class="empty-icon">◑</div>
+              <div class="empty-text">Submit your swim data<br>to see AI analysis</div>
+            </div>
+            <div id="analysis-thinking" style="display:none;padding:32px;text-align:center;color:var(--text3);font-size:13px;">
+              <div class="thinking-dots"><span></span><span></span><span></span></div>
+              <div style="margin-top:10px;">Analysing performance…</div>
+            </div>
+            <div id="analysis-results" style="display:none;overflow-y:auto;flex:1;">
+              <div class="score-display">
+                <div class="score-circle">
+                  <svg width="72" height="72" viewBox="0 0 72 72">
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(57,208,216,.1)" stroke-width="6"/>
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="var(--cyan)" stroke-width="6" stroke-linecap="round" stroke-dasharray="188.5" id="score-arc" stroke-dashoffset="188.5"/>
+                  </svg>
+                  <div class="score-inner">
+                    <div class="score-num" id="a-score">—</div>
+                    <div class="score-lbl">Score</div>
+                  </div>
+                </div>
+                <div>
+                  <h4 id="a-grade" style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;">—</h4>
+                  <p id="a-summary" style="font-size:12px;color:var(--text2);line-height:1.5;">—</p>
+                </div>
+              </div>
+              <div class="metric-rows" id="a-metrics"></div>
+              <div class="ai-insight">
+                <div class="insight-label">AI Coaching Notes</div>
+                <div class="insight-text" id="a-insight">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DRYLAND -->
+      <div class="view" id="view-dryland">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div>
+            <div style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;">Dryland &amp; Stretches</div>
+            <div style="font-size:13px;color:var(--text2);">Build strength and flexibility out of the water</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:var(--cyan);font-weight:500;" id="dryland-pct">0%</div>
+            <div style="font-size:11px;color:var(--text3);" id="dryland-count">0/12 complete</div>
+          </div>
+        </div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="dryland-bar" style="width:0%;"></div></div>
+        <div class="dryland-tabs">
+          <button class="dryland-tab active" onclick="switchDrylandTab('stretches', this)">🧘 Stretching</button>
+          <button class="dryland-tab" onclick="switchDrylandTab('dryland', this)">💪 Dryland</button>
+        </div>
+        <div class="exercise-grid" id="exercise-grid"></div>
+      </div>
+
+      <!-- ACHIEVEMENTS -->
+      <div class="view" id="view-achievements">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+          <div>
+            <div style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;">Achievements &amp; Goals</div>
+            <div style="font-size:13px;color:var(--text2);" id="ach-unlock-label">0 of 12 achievements unlocked</div>
+          </div>
+          <div style="display:flex;gap:5px;align-items:center;" id="ach-preview-icons"></div>
+        </div>
+        <div class="ach-tabs">
+          <button class="ach-tab active" onclick="switchAchTab('achievements', this)">🏆 Achievements</button>
+          <button class="ach-tab" onclick="switchAchTab('goals', this)">🎯 Goals</button>
+        </div>
+
+        <div id="ach-panel">
+          <div id="ach-unlocked-section" style="display:none;">
+            <div class="ach-section-label" id="ach-unlocked-label">Unlocked — 0</div>
+            <div class="ach-grid" id="ach-unlocked-grid"></div>
+          </div>
+          <div id="ach-locked-section">
+            <div class="ach-section-label" id="ach-locked-label">Locked — 12</div>
+            <div class="ach-grid" id="ach-locked-grid"></div>
+          </div>
+          <div id="ach-empty" style="display:none;" class="empty-panel">
+            <div class="empty-icon">🔒</div>
+            <div class="empty-text">Log your first time to start unlocking achievements!</div>
+          </div>
+        </div>
+
+        <div id="goals-panel" style="display:none;">
+          <div class="goals-layout">
+            <div id="goals-list">
+              <div id="goals-empty" class="empty-panel">
+                <div class="empty-icon">🎯</div>
+                <div class="empty-text">No goals yet.<br>Set your first goal to stay motivated.</div>
+              </div>
+              <div id="active-goals-section" style="display:none;">
+                <div class="ach-section-label" id="active-label">Active — 0</div>
+                <div id="active-goals-list"></div>
+              </div>
+              <div id="done-goals-section" style="display:none;margin-top:20px;">
+                <div class="ach-section-label" id="done-label">Completed — 0</div>
+                <div id="done-goals-list"></div>
+              </div>
+            </div>
+
+            <div class="card" style="position:sticky;top:0;">
+              <div class="card-head"><span class="card-title">Add a Goal</span></div>
+              <div class="card-body">
+                <div class="form-grid" style="grid-template-columns:1fr;gap:12px;">
+                  <div class="form-field">
+                    <label>Type</label>
+                    <select id="g-type">
+                      <option value="time">⏱ Time Goal</option>
+                      <option value="training">💪 Training Goal</option>
+                      <option value="event">🎽 Event Goal</option>
+                      <option value="other">🎯 Other</option>
+                    </select>
+                  </div>
+                  <div class="form-field"><label>Goal</label><input type="text" id="g-title" placeholder="e.g. Break 1min in 100m freestyle"></div>
+                  <div class="form-field"><label>Target (optional)</label><input type="text" id="g-target" placeholder="e.g. 0:59.80"></div>
+                  <div class="form-field"><label>Target Date (optional)</label><input type="date" id="g-by"></div>
+                </div>
+                <div class="form-actions"><button class="btn primary" onclick="addGoal()">Add Goal</button></div>
+                <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);">
+                  <div style="font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;">Quick Add</div>
+                  <button class="quick-add-btn" onclick="quickGoal('Break a PR this season')">+ Break a PR this season</button>
+                  <button class="quick-add-btn" onclick="quickGoal('Train 5× per week')">+ Train 5× per week</button>
+                  <button class="quick-add-btn" onclick="quickGoal('Qualify for regionals')">+ Qualify for regionals</button>
+                  <button class="quick-add-btn" onclick="quickGoal('Improve flip turns')">+ Improve flip turns</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACCOUNT -->
+      <div class="view" id="view-account">
+        <div class="profile-header">
+          <div class="profile-avatar" id="prof-avatar">?</div>
+          <div style="flex:1;">
+            <div style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;" id="prof-display-name">Swimmer</div>
+            <div style="font-size:13px;color:var(--text2);" id="prof-display-club">No club set — edit your profile</div>
+            <div class="profile-pills">
+              <div class="profile-pill"><span style="color:var(--text3);font-size:10px;">Height</span><span id="prof-pill-height">—</span></div>
+              <div class="profile-pill"><span style="color:var(--text3);font-size:10px;">Level</span><span id="prof-pill-level">—</span></div>
+              <div class="profile-pill"><span style="color:var(--text3);font-size:10px;">Stroke</span><span id="prof-pill-stroke">—</span></div>
+            </div>
+          </div>
+          <button class="btn primary" onclick="saveProfile()">Save changes</button>
+        </div>
+
+        <div class="account-grid">
+          <div class="card">
+            <div class="card-head"><span class="card-title">Personal Information</span></div>
+            <div class="card-body">
+              <div class="section-divider">Identity</div>
+              <div class="form-grid">
+                <div class="form-field"><label>First Name</label><input type="text" id="p-firstname" placeholder="Alex"></div>
+                <div class="form-field"><label>Last Name</label><input type="text" id="p-lastname" placeholder="Johnson"></div>
+                <div class="form-field"><label>Date of Birth</label><input type="date" id="p-dob"></div>
+                <div class="form-field"><label>Gender</label>
+                  <select id="p-gender">
+                    <option value="">Select…</option><option>Male</option><option>Female</option>
+                    <option>Non-binary</option><option>Prefer not to say</option>
+                  </select>
+                </div>
+                <div class="form-field"><label>Nationality</label><input type="text" id="p-nationality" placeholder="e.g. British"></div>
+                <div class="form-field"><label>City / Country</label><input type="text" id="p-location" placeholder="e.g. London, UK"></div>
+              </div>
+              <div class="section-divider" style="margin-top:20px;">Physical Stats</div>
+              <div class="form-grid">
+                <div class="form-field"><label>Height (cm)</label><input type="number" id="p-height" placeholder="e.g. 178"></div>
+                <div class="form-field"><label>Weight (kg)</label><input type="number" id="p-weight" placeholder="e.g. 72"></div>
+                <div class="form-field"><label>Wingspan (cm)</label><input type="number" id="p-wingspan" placeholder="e.g. 182"></div>
+                <div class="form-field"><label>Shoe Size (EU)</label><input type="number" id="p-shoe" placeholder="e.g. 43"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="card-title">Swimming Profile</span></div>
+            <div class="card-body">
+              <div class="section-divider">Club &amp; Coach</div>
+              <div class="form-grid">
+                <div class="form-field full"><label>Club Name</label><input type="text" id="p-club" placeholder="e.g. City Aquatics Club"></div>
+                <div class="form-field full"><label>Coach Name</label><input type="text" id="p-coach" placeholder="e.g. Sarah Williams"></div>
+                <div class="form-field"><label>Years Swimming</label><input type="number" id="p-years" placeholder="e.g. 8"></div>
+                <div class="form-field"><label>Competition Level</label>
+                  <select id="p-level">
+                    <option value="">Select…</option><option>Recreational</option><option>Club</option>
+                    <option>Regional</option><option>National</option><option>International</option><option>Olympic</option>
+                  </select>
+                </div>
+              </div>
+              <div class="section-divider" style="margin-top:20px;">Specialisation</div>
+              <div class="form-grid">
+                <div class="form-field"><label>Primary Stroke</label>
+                  <select id="p-stroke">
+                    <option value="">Select…</option><option>Freestyle</option><option>Backstroke</option>
+                    <option>Breaststroke</option><option>Butterfly</option><option>Individual Medley</option>
+                  </select>
+                </div>
+                <div class="form-field"><label>Primary Distance</label>
+                  <select id="p-distance">
+                    <option value="">Select…</option><option>Sprint (50m)</option><option>Short (100m)</option>
+                    <option>Middle (200m)</option><option>Distance (400m+)</option><option>Open Water</option>
+                  </select>
+                </div>
+                <div class="form-field"><label>Training Days / Week</label>
+                  <select id="p-training">
+                    <option value="">Select…</option><option>1–2 days</option><option>3–4 days</option>
+                    <option>5–6 days</option><option>7 days</option><option>2× per day</option>
+                  </select>
+                </div>
+                <div class="form-field"><label>Pool Access</label>
+                  <select id="p-pool">
+                    <option value="">Select…</option><option>Short Course (25m)</option>
+                    <option>Long Course (50m)</option><option>Both</option><option>Open Water</option>
+                  </select>
+                </div>
+                <div class="form-field full">
+                  <label>Goals / Notes</label>
+                  <textarea id="p-goals" rows="3" style="resize:vertical;" placeholder="e.g. Qualify for nationals…"></textarea>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button class="btn primary" onclick="saveProfile()">Save all changes</button>
+                <button class="btn danger" onclick="handleLogout()">Sign out</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end content -->
+  </div><!-- end main -->
+</div><!-- end app -->
+
+<div class="save-toast" id="save-toast">✓ Profile saved</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
