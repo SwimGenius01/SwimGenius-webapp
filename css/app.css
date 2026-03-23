@@ -783,3 +783,101 @@ body { overflow: hidden; }
   pointer-events: none;
 }
 .save-toast.show { opacity: 1; transform: translateY(0); }
+
+/* ============================================
+   MOBILE RESPONSIVE — added for phone support
+   ============================================ */
+
+/* Hamburger toggle button (hidden on desktop) */
+.mob-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text2);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+
+  /* Show hamburger in topbar */
+  .mob-menu-btn { display: block; }
+
+  /* Sidebar slides in/out as an overlay */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    width: 260px;
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  /* Dim overlay behind open sidebar */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    z-index: 199;
+  }
+  .sidebar-overlay.show { display: block; }
+
+  /* Main takes full width */
+  .main { width: 100%; }
+
+  /* Topbar */
+  .topbar { padding: 0 14px; }
+
+  /* Content padding */
+  .content { padding: 16px 14px; }
+
+  /* Dashboard stats: 2 cols on phone */
+  .dash-stats { grid-template-columns: 1fr 1fr; }
+
+  /* Dashboard main: single column */
+  .dash-main { grid-template-columns: 1fr; }
+
+  /* Forms: single column */
+  .two-col,
+  .form-grid,
+  .analysis-grid,
+  .account-grid { grid-template-columns: 1fr; }
+
+  /* Goals layout: single column */
+  .goals-layout { grid-template-columns: 1fr; }
+
+  /* Exercise grid: 1 col on phone */
+  .exercise-grid { grid-template-columns: 1fr; }
+
+  /* Achievements grid: 2 cols */
+  .ach-grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* Chat: full height minus header */
+  .chat-wrap { height: calc(100vh - 160px); max-height: unset; }
+
+  /* Dash welcome: stack vertically */
+  .dash-welcome { flex-direction: column; align-items: flex-start; gap: 6px; }
+
+  /* Profile header: stack */
+  .profile-header { flex-direction: column; align-items: flex-start; gap: 14px; }
+
+  /* Dryland / ach tab widths */
+  .dryland-tabs,
+  .ach-tabs { max-width: 100%; }
+
+  /* Toast: full-width on mobile */
+  .save-toast { left: 14px; right: 14px; bottom: 14px; }
+}
+
+@media (max-width: 420px) {
+  /* Extra small phones: 1-col achievements */
+  .ach-grid { grid-template-columns: repeat(2, 1fr); }
+  .dash-stats { grid-template-columns: 1fr 1fr; }
+  .dash-greeting { font-size: 18px; }
+}
