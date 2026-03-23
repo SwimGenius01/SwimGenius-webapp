@@ -1,8 +1,15 @@
 // ============================================
-// COACH.JS — AI Coach using Anthropic API
+// COACH.JS — AI Coach via Firebase Cloud Function
+// The function securely holds the Anthropic API key.
 // ============================================
 
-let chatHistory = [];
+// !! Replace YOUR_PROJECT_ID with your actual Firebase project ID !!
+// Found in firebase-config.js as "projectId"
+const PROJECT_ID = "swimgenius-webapp";
+const REGION     = "us-central1";
+
+const CHAT_URL     = `https://${REGION}-${PROJECT_ID}.cloudfunctions.net/coachChat`;
+const ANALYSIS_URL = `https://${REGION}-${PROJECT_ID}.cloudfunctions.net/coachAnalysis`;
 
 const SYSTEM_PROMPT = `You are SwimGenius AI Coach — an expert swimming coach and sports scientist.
 You help competitive and recreational swimmers improve their performance, technique, and training.
@@ -10,45 +17,40 @@ Be encouraging, specific, and practical. Keep responses concise (2–4 short par
 When analysing swims, reference real coaching concepts: stroke mechanics, turns, starts, pacing, drills.
 If you don't have enough info, ask one focused follow-up question.`;
 
+let chatHistory = [];
+
 export function initCoach() {
   chatHistory = [];
 }
 
-// ── Chat reply ────────────────────────────────
+// ── Chat ─────────────────────────────────────
 export async function getCoachReply(userMessage) {
   chatHistory.push({ role: "user", content: userMessage });
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch(CHAT_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model:      "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        system:     SYSTEM_PROMPT,
-        messages:   chatHistory
-      })
+      body: JSON.stringify({ messages: chatHistory, system: SYSTEM_PROMPT })
     });
 
-    if (!response.ok) throw new Error("API error " + response.status);
+    if (!response.ok) throw new Error("Function error " + response.status);
 
     const data  = await response.json();
-    const reply = (data.content && data.content[0] && data.content[0].text)
-                  ? data.content[0].text
-                  : "Sorry, I couldn't get a response. Please try again.";
+    const reply = data.content?.[0]?.text ?? "Sorry, no response received.";
 
     chatHistory.push({ role: "assistant", content: reply });
     return reply;
 
   } catch (err) {
-    console.error("Coach API error:", err);
-    const errMsg = "⚠️ Couldn't reach the AI Coach right now. Check your connection and try again.";
-    chatHistory.push({ role: "assistant", content: errMsg });
-    return errMsg;
+    console.error("Coach error:", err);
+    const msg = "⚠️ Couldn't reach the AI Coach. Make sure the Cloud Function is deployed.";
+    chatHistory.push({ role: "assistant", content: msg });
+    return msg;
   }
 }
 
-// ── Swim analysis ─────────────────────────────
+// ── Analysis ─────────────────────────────────
 export async function getAnalysis(stroke, dist, time, notes) {
   const prompt = `Analyse this swim result and return ONLY a JSON object — no markdown, no extra text.
 
@@ -74,31 +76,28 @@ Return exactly this JSON shape:
 }`;
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch(ANALYSIS_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model:      "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        system:     "You are a swim performance analyst. Always respond with valid JSON only.",
-        messages:   [{ role: "user", content: prompt }]
+        messages: [{ role: "user", content: prompt }],
+        system: "You are a swim performance analyst. Always respond with valid JSON only."
       })
     });
 
-    if (!response.ok) throw new Error("API error " + response.status);
+    if (!response.ok) throw new Error("Function error " + response.status);
 
-    const data = await response.json();
-    const text = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : "";
-
+    const data  = await response.json();
+    const text  = data.content?.[0]?.text ?? "";
     const clean = text.replace(/```json|```/g, "").trim();
     return JSON.parse(clean);
 
   } catch (err) {
-    console.error("Analysis API error:", err);
+    console.error("Analysis error:", err);
     return {
       score:    0,
       grade:    "Analysis Failed",
-      summary:  "Could not reach the AI — please try again.",
+      summary:  "Could not reach the AI — make sure the Cloud Function is deployed.",
       metrics:  [
         { name: "Pacing",     value: 0 },
         { name: "Technique",  value: 0 },
@@ -106,7 +105,7 @@ Return exactly this JSON shape:
         { name: "Turns",      value: 0 },
         { name: "Efficiency", value: 0 }
       ],
-      insights: "⚠️ AI analysis unavailable. Check your connection and try again."
+      insights: "⚠️ AI analysis unavailable. Check that your Cloud Function is deployed."
     };
   }
 }
